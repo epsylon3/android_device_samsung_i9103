@@ -1,0 +1,55 @@
+#
+# system.prop from device tree
+#
+
+rild.libpath=/system/lib/libsec-ril.so
+rild.libargs=-d /dev/ttyS0
+ro.sf.lcd_density=240
+dalvik.vm.heapsize=64m
+
+#Define TCP buffer sizes for various networks
+#ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
+net.tcp.buffersize.default=131072,262144,524288,4096,16384,147456
+net.tcp.buffersize.wifi=131072,262144,524288,4096,16384,147456
+net.tcp.buffersize.hspa=131072,262144,524288,4096,16384,147456
+net.tcp.buffersize.umts=131072,262144,524288,4096,16384,147456
+net.tcp.buffersize.edge=16384,32768,65536,4096,16384,32768
+net.tcp.buffersize.gprs=4096,8192,12288,4096,8192,12288
+
+# Default network type.
+# 0 -> WCDMA preferred
+ro.telephony.default_network=0
+
+# Main wifi network interface
+wifi.interface=eth0
+
+# Time between scans in seconds. Keep it high to minimize battery drain.
+# This only affects the case in which there are remembered access points,
+# but none are in range.
+wifi.supplicant_scan_interval=30
+
+#OpenGL ES version
+ro.opengles.version = 131072
+
+# Tegra debugging
+persist.tegra.nvlog.level=4
+#persist.tegra.nvlog.14.level=5
+
+# DRM ?
+persist.tegra.drmlib.asfdrm=libnvdrm.so
+Drmdll.asfdrm=libnvdrm.so
+
+# Set locale to English GB (GMT) by default
+ro.product.locale.language=en
+ro.product.locale.region=GB
+
+# Enable detailed GC data and SMP dexopt
+dalvik.vm.dexopt-flags=m=y,u=n
+
+#
+# ADDITIONAL_DEFAULT_PROPERTIES
+#
+ro.secure=0
+ro.debuggable=1
+ro.com.google.clientidbase=android-samsung
+
