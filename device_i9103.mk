@@ -17,6 +17,9 @@ PRODUCT_PACKAGES += libaudio libaudiopolicy amix aplay arec
 # external packages
 PRODUCT_PACKAGES += hcitool hciconfig
 
+# tools for communication (most included in cm7 config, but remember for ics)
+PRODUCT_PACKAGES += DroidSSHd dropbear dropbearkey sftp-server scp ssh rsync
+
 ###############################################################################
 
 ifeq ($(TARGET_PREBUILT_KERNEL),)

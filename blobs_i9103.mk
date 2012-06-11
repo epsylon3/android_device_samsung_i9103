@@ -27,6 +27,7 @@ PRODUCT_COPY_FILES += \
     ${device_top}/etc/media_profiles.xml:system/etc/media_profiles.xml \
     ${device_top}/etc/profile:system/etc/profile \
     ${device_top}/etc/sysctl.conf:system/etc/sysctl.conf \
+    ${device_top}/etc/sirfgps.conf:system/etc/sirfgps.conf \
     ${device_top}/modules/modules.dep:system/lib/modules/modules.dep \
 
 # device specs
