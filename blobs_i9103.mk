@@ -21,9 +21,32 @@ PRODUCT_COPY_FILES += \
     ${device_top}/usr/keylayout/sec_jack.kl:system/usr/keylayout/sec_jack.kl \
     ${device_top}/usr/keylayout/sec_key.kl:system/usr/keylayout/sec_key.kl \
 
+# etc
 PRODUCT_COPY_FILES += \
-    ${device_top}/recovery/recovery.fstab:system/etc/recovery.fstab \
+    ${device_top}/etc/busybox.fstab:system/etc/fstab \
+    ${device_top}/etc/media_profiles.xml:system/etc/media_profiles.xml \
+    ${device_top}/etc/profile:system/etc/profile \
+    ${device_top}/etc/sysctl.conf:system/etc/sysctl.conf \
 
+# device specs
+PRODUCT_COPY_FILES += \
+    frameworks/base/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml \
+    frameworks/base/data/etc/android.hardware.camera.front.xml:system/etc/permissions/android.hardware.camera.front.xml \
+    frameworks/base/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
+    frameworks/base/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
+    frameworks/base/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
+    frameworks/base/data/etc/android.hardware.sensor.accelerometer.xml:system/etc/permissions/android.hardware.sensor.accelerometer.xml \
+    frameworks/base/data/etc/android.hardware.sensor.compass.xml:system/etc/permissions/android.hardware.sensor.compass.xml \
+    frameworks/base/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml \
+    frameworks/base/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch..jazzhand.xml \
+
+# recovery
+PRODUCT_COPY_FILES += \
+    ${device_top}/recovery/recovery.fstab:recovery/root/etc/recovery.fstab \
+    ${device_top}/recovery/init.rc:recovery/root/init.rc \
+    ${device_top}/root/ueventd.rc:recovery/root/ueventd.rc
+
+# kernel
 PRODUCT_COPY_FILES += \
     ${device_top}/root/init.rc:root/init.rc \
     ${device_top}/root/init.n1.rc:root/init.tegra.rc \
