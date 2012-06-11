@@ -11,9 +11,9 @@ MOD_NAME = j4fs
 
 #ifneq ($(KERNELRELEASE),)
 
-EXTRA_CFLAGS += -I$(PRJROOT)/modules/include -I$(KDIR)/drivers/tfsr/Inc \
-	-I$(KDIR)/include -I$(KDIR)/include/linux \
-	-I$(KDIR)/include/asm -D__KERNEL
+#EXTRA_CFLAGS += -I$(KDIR)/drivers/tfsr/Inc \
+#	-I$(KDIR)/include -I$(KDIR)/include/linux \
+#	-I$(KDIR)/include/asm -D__KERNEL
 
 obj-m += $(MOD_NAME).o
 

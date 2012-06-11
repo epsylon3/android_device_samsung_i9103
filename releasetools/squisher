@@ -198,9 +198,9 @@ ls -l $OUTFILE
 echo
 
 if [ -x $DEVICE_TOP/releasetools/addons ]; then
-	#$DEVICE_TOP/releasetools/addons kernel
+	$DEVICE_TOP/releasetools/addons kernel
 	$DEVICE_TOP/releasetools/addons recovery
-	$DEVICE_TOP/releasetools/addons bootmenu
+	#$DEVICE_TOP/releasetools/addons bootmenu
 fi
 
 exit 0
