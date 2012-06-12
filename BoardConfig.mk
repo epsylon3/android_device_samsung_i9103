@@ -10,19 +10,19 @@ TARGET_ARCH_VARIANT := armv7-a
 TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
-#TARGET_CPU_SMP := true
+TARGET_CPU_SMP := true
 
+TARGET_NO_BOOT := false
 BOARD_KERNEL_BASE := 0x10000000
-BOARD_PAGE_SIZE := 0x00000800
+BOARD_PAGE_SIZE   := 0x00000800
 TARGET_PREBUILT_KERNEL := device/samsung/i9103/kernel
+TARGET_PREBUILT_UTSVER := 2.6.36.3-I9103XWLA4-CL905222
+
+# enabling this will also update the device tree
+# TARGET_BUILD_KERNEL := true
+KERNEL_SRC_DIR := $(ANDROID_BUILD_TOP)/kernel/samsung/i9103
 TARGET_KERNEL_MODULES_EXT := device/samsung/i9103/modules
 TARGET_KERNEL_UTSRELEASE  := 2.6.36.3
-KERNEL_SRC_DIR := $(ANDROID_BUILD_TOP)/kernel/samsung/i9103
-
-# do not update the device tree...
-DO_NO_REBUILT_THE_KERNEL := 1
-
-#TARGET_NO_BOOT := false
 
 # use a prebuilt init.rc for the first roms
 TARGET_PROVIDES_INIT_RC := true
