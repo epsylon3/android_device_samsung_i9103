@@ -7,8 +7,8 @@
 /misc           emmc            /dev/block/mmcblk0p5
 /data           ext4            /dev/block/mmcblk0p6
 
-/boot           emmc            /dev/block/mmcblk0p98 # to check on device
-/recovery       emmc            /dev/block/mmcblk0p99 # to check on device
+/recovery       emmc            /dev/block/mmcblk0p8
+/boot           emmc            /dev/block/mmcblk0p9
 
 /preload        ext4            /dev/block/mmcblk0p11
 

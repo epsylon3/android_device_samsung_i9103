@@ -1,14 +1,18 @@
 # This file is used to build the different partitions
-# dont change this file, it is not related to recovery
+# content is parsed to create the updater-script...
 #
-# the recovery one  : recovery/recovery.fstab
-# the busybox fstab : etc/busybox.fstab
+# for the recovery partitions, edit :
+# - recovery/recovery.fstab
+#
+# for the mount command line busybox fstab :
+# - etc/busybox.fstab
 #
 # mount point   fstype          device
 
-/boot           emmc            /dev/block/mmcblk0p98
-/recovery       emmc            /dev/block/mmcblk0p99
-
 /system         ext4            /dev/block/mmcblk0p2
+/cache          ext4            /dev/block/mmcblk0p3
 /data           ext4            /dev/block/mmcblk0p6
+
+/recovery       emmc            /dev/block/mmcblk0p8
+/boot           emmc            /dev/block/mmcblk0p9
 
