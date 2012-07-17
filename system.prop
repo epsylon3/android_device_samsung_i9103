@@ -2,8 +2,6 @@
 # system.prop from device tree
 #
 
-rild.libpath=/system/lib/libsec-ril.so
-rild.libargs=-d /dev/ttyS0
 ro.sf.lcd_density=240
 dalvik.vm.heapsize=64m
 
@@ -16,12 +14,22 @@ net.tcp.buffersize.umts=131072,262144,524288,4096,16384,147456
 net.tcp.buffersize.edge=16384,32768,65536,4096,16384,32768
 net.tcp.buffersize.gprs=4096,8192,12288,4096,8192,12288
 
-# Default network type.
-# 0 -> WCDMA preferred
-ro.telephony.default_network=0
+# Default GSM network type.
+ro.telephony.default_network=3
 
 # Main wifi network interface
 wifi.interface=eth0
+
+# Wifi ap interface
+wifi.ap.interface=wl0.1
+softap.interface=wl0.1
+ro.wifi-ap.fw-path=/etc/bcm4330_aps.bin
+
+# To fix the tethering, eth0 should not be listed here
+mobiledata.interfaces=rmnet0
+
+# BT mac address
+ro.bt.bdaddr_path=/efs/imei/bt.txt
 
 # Time between scans in seconds. Keep it high to minimize battery drain.
 # This only affects the case in which there are remembered access points,
@@ -45,6 +53,16 @@ ro.product.locale.region=GB
 
 # Enable detailed GC data and SMP dexopt
 dalvik.vm.dexopt-flags=m=y,u=n
+
+# Forbid format of these partitions in mount menu :
+ro.cwm.forbid_format=/misc,/radio,/recovery,/efs
+
+# Allow people to exchange sdcard and emmc mountpoints from CMParts
+# Vold switchability
+ro.vold.switchablepair=/mnt/sdcard,/mnt/emmc
+
+# Mount the internal SD card, too
+ro.additionalmounts=/mnt/emmc
 
 #
 # ADDITIONAL_DEFAULT_PROPERTIES

@@ -11,6 +11,31 @@ $(call inherit-product-if-exists, vendor/samsung/i9103/i9103-vendor.mk)
 
 ###############################################################################
 
+# Telephony properties
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.ril.enable.3g.prefix=1 \
+    ro.ril.enable.a53=1 \
+    ro.ril.enable.dtm=1 \
+    ro.ril.enable.managed.roaming=1 \
+    ro.ril.gprsclass=12 \
+    ro.ril.hep=1 \
+    ro.ril.hsdpa.category=8 \
+    ro.ril.hsupa.category=5 \
+    ro.ril.hsxpa=2 \
+    ro.kernel.android.ril=yes \
+    ro.telephony.ril_class=samsung \
+    rild.libpath=/system/lib/libsec-ril.so \
+    rild.libargs="-d /dev/ttyS0"
+
+###############################################################################
+
+PRODUCT_PACKAGES += \
+    sensors.GT-I9103 \
+    lights.GT-I9103 \
+    gps.GT-I9103 \
+    gralloc.tegra \
+    overlay.tegra
+
 # device modules
 PRODUCT_PACKAGES += libaudio libaudiopolicy amix aplay arec
 
