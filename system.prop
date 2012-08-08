@@ -1,0 +1,79 @@
+#
+# system.prop from device tree
+#
+
+ro.sf.lcd_density=240
+
+rild.libpath=/system/lib/libsec-ril.so
+rild.libargs=-d /dev/ttyS0
+ro.kernel.android.ril=yes
+ro.telephony.ril_class=samsung
+
+dalvik.vm.heapsize=64m
+
+#Define TCP buffer sizes for various networks
+#ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
+net.tcp.buffersize.default=131072,262144,524288,4096,16384,147456
+net.tcp.buffersize.wifi=131072,262144,524288,4096,16384,147456
+net.tcp.buffersize.hspa=131072,262144,524288,4096,16384,147456
+net.tcp.buffersize.umts=131072,262144,524288,4096,16384,147456
+net.tcp.buffersize.edge=16384,32768,65536,4096,16384,32768
+net.tcp.buffersize.gprs=4096,8192,12288,4096,8192,12288
+
+# Default GSM network type.
+ro.telephony.default_network=3
+
+# Main wifi network interface
+wifi.interface=eth0
+
+# Wifi ap interface
+wifi.ap.interface=wl0.1
+softap.interface=wl0.1
+ro.wifi-ap.fw-path=/etc/bcm4330_aps.bin
+
+# To fix the tethering, eth0 should not be listed here
+mobiledata.interfaces=rmnet0
+
+# Time between scans in seconds. Keep it high to minimize battery drain.
+# This only affects the case in which there are remembered access points,
+# but none are in range.
+wifi.supplicant_scan_interval=30
+
+#OpenGL ES version
+ro.opengles.version = 131072
+
+# Tegra debugging
+persist.tegra.nvlog.level=4
+#persist.tegra.nvlog.14.level=5
+
+# DRM ?
+persist.tegra.drmlib.asfdrm=libnvdrm.so
+Drmdll.asfdrm=libnvdrm.so
+
+# Set locale to English GB (GMT) by default
+ro.product.locale.language=en
+ro.product.locale.region=GB
+
+# Enable detailed GC data and SMP dexopt
+dalvik.vm.dexopt-flags=m=y,u=n
+
+# Scrolling cache 0:enable, 1:default enable, 2:default disable, 3:disable
+persist.sys.scrollingcache=2
+
+# Forbid format of these partitions in mount menu :
+ro.cwm.forbid_format=/misc,/radio,/recovery,/efs
+
+# Allow people to exchange sdcard and emmc mountpoints from CMParts
+# Vold switchability
+ro.vold.switchablepair=/mnt/sdcard,/mnt/emmc
+
+# Mount the internal SD card, too
+ro.additionalmounts=/mnt/emmc
+
+#
+# ADDITIONAL_DEFAULT_PROPERTIES
+#
+ro.secure=0
+ro.debuggable=1
+ro.com.google.clientidbase=android-samsung
+

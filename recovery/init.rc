@@ -1,0 +1,62 @@
+on early-init
+    start ueventd
+    loglevel 8
+
+on init
+    export PATH /sbin
+    export ANDROID_ROOT /system
+    export ANDROID_DATA /data
+    export EXTERNAL_STORAGE /sdcard
+
+    # busybox history for "adb shell"
+    export HISTFILE /tmp/.ash_history
+    export HISTFILESIZE 1000
+    export ENV /etc/profile
+
+    symlink /system/etc /etc
+
+    mkdir /boot
+    mkdir /emmc
+    mkdir /sdcard
+    mkdir /sd-ext
+    mkdir /system
+    mkdir /data
+    mkdir /cache
+    mount ramfs /tmp /tmp
+
+    mkdir /mnt
+    symlink /sdcard /mnt/sdcard
+    symlink /sdcard /mnt/ext_sdcard
+    symlink /emmc /mnt/emmc
+    symlink /emmc /mnt/int_sdcard
+
+on boot
+
+    ifup lo
+    hostname localhost
+    domainname localdomain
+
+    setprop ro.product.board GT-I9103
+    setprop ro.product.device GT-I9103
+    setprop ro.product.name i9103
+
+    # in recovery, dmesg could report hung tasks (cpufreq-dvfsd)
+    write /proc/sys/kernel/hung_task_timeout_secs 0
+
+    class_start default
+
+service ueventd /sbin/ueventd
+    critical
+
+service recovery /sbin/recovery
+    oneshot
+
+service adbd /sbin/adbd recovery
+    disabled
+
+on property:persist.service.adb.enable=1
+    start adbd
+
+on property:persist.service.adb.enable=0
+    stop adbd
+
