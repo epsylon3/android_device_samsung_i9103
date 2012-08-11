@@ -37,8 +37,8 @@
 #define KLOG_MAIN_KB   512
 #define KLOG_KERNEL_KB 128
 
-/* fixed minor to keep dynamic order, else set to 255 */
-#define DEV_LOGKERNEL_MISC_MINOR 100
+/* fixed minor to keep dynamic order, else set to :        */
+#define DEV_LOGKERNEL_MISC_MINOR 100 /* MISC_DYNAMIC_MINOR */
 
 #include "hook.h"
 
@@ -267,8 +267,7 @@ static inline int clock_interval(size_t a, size_t b, size_t c)
 	if (b < a) {
 		if (a < c || b >= c)
 			return 1;
-	} else {
-		if (a < c && b >= c)
+	} else if (a < c && b >= c) {
 			return 1;
 	}
 	return 0;
@@ -301,18 +300,21 @@ static void fix_up_readers(struct logger_log *log, size_t len)
  *
  * The caller needs to hold log->mutex.
  */
-static void do_write_log(struct logger_log *log, const void *buf, size_t count)
+static ssize_t do_write_log(struct logger_log *log, const void *buf, size_t count)
 {
 	size_t len;
 
 	len = min(count, log->size - log->w_off);
 	memcpy(log->buffer + log->w_off, buf, len);
 
-	if (count != len)
+	if (count != len) {
+		/* write to the circle buffer start */
 		memcpy(log->buffer, buf + len, count - len);
+	}
 
 	log->w_off = logger_offset(log->w_off + count);
 
+	return (ssize_t) (count - len);
 }
 
 /*
@@ -571,7 +573,7 @@ static struct file_operations kernel_logger_fops = {
 static struct logger_log log_kernel = {
 	.buffer = _buf_log_kernel,
 	.misc ={
-		.minor = MISC_DYNAMIC_MINOR,
+		.minor = DEV_LOGKERNEL_MISC_MINOR,
 		.name = "log_kernel",
 		.fops = &kernel_logger_fops,
 		.parent = NULL,
@@ -585,17 +587,15 @@ static struct logger_log log_kernel = {
 };
 
 static struct iovec vec[4];
+static struct logger_entry header;
 static void klogger_kernel_write(struct console *co, const char *s, unsigned count)
 {
-	struct logger_entry header;
 	struct timespec now;
-	struct logger_log *log= &log_kernel;
+	struct logger_log *log = &log_kernel;
 	unsigned int msg_len;
 	struct iovec *iov = &vec[0];
 	int vec_count = 3;
-	int noheader = 0;
 	int prio = 3;
-	ssize_t ret = 1;
 	const char tag[7] = "kernel\0";
 
 #ifdef RESIZE_LOG
@@ -606,53 +606,65 @@ static void klogger_kernel_write(struct console *co, const char *s, unsigned cou
 	}
 #endif
 
+	if (vec[0].iov_len != 1) {
+		// first time, zero them
+		memset(&vec[0], 0, sizeof(struct iovec));
+		memset(&vec[1], 0, sizeof(struct iovec));
+		memset(&vec[3], 0, sizeof(struct iovec));
+		memset(&header, 0, sizeof(struct logger_entry));
+	}
+
 	/* since s is a pointer to LOG_BUF and we know LOG_BUF is continuous,
 	 * s[-3]='<', s[-2] is the log level and s[-1]='>'.
-	 * If not, we set loglevel as default value 3
+	 * If not, we let loglevel as default value 3
 	 */
-	if (s[-1] == '>') {
+	if (s[-1] != '>') {
+		if (vec[0].iov_len != 1) {
+			prio = 0; /* should not happen */
+			vec[0].iov_base = (unsigned char *) &prio;
+			vec[0].iov_len  = 1;
+			vec[1].iov_base = (void *)tag;
+			vec[1].iov_len = strlen(tag) + 1;
+		}
+	} else {
+		now = current_kernel_time();
+
+		header.sec = now.tv_sec;
+		header.nsec= now.tv_nsec;
+
 		switch (s[-2]) {
 		case '3': prio=6;break;
 		case '4': prio=5;break;
 		case '5': prio=4;break;
 		case '6': prio=4;break;
 		}
-	} else {
-		noheader = 1;
+		vec[0].iov_base = (unsigned char *) &prio;
+		vec[0].iov_len  = 1;
+		vec[1].iov_base = (void *)tag;
+		vec[1].iov_len = strlen(tag) + 1;
 	}
-	vec[0].iov_base = (unsigned char *) &prio;
-	vec[0].iov_len  = 1;
-	vec[1].iov_base = (void *)tag;
-	vec[1].iov_len = strlen(tag) + 1;
 	vec[2].iov_base = (void *)s;
 	vec[2].iov_len  = count;
-	vec[3].iov_base = NULL;
-	vec[3].iov_len  = 0;
 
 	/* remove timestamp in content, already set */
 	#define LOGTIME_SZ sizeof("[    8.081103]")
-	if (count > LOGTIME_SZ) {
+	if (count > LOGTIME_SZ && s[0] == '[') {
 		vec[2].iov_base += LOGTIME_SZ;
 		vec[2].iov_len  -= LOGTIME_SZ;
 	}
 
-	now = current_kernel_time();
-
-	header.pid = 0;
-	header.tid = 0;
-	header.sec = now.tv_sec;
-	header.nsec= now.tv_nsec;
+	header.pid = vec[2].iov_len; /* length of the line to debug */
 
 	msg_len = vec[0].iov_len + vec[1].iov_len + vec[2].iov_len;
 	header.len = min_t(size_t, msg_len, LOGGER_ENTRY_MAX_PAYLOAD - 1);
 	do_write_log(log, &header, sizeof(struct logger_entry));
-	fix_up_readers(log, sizeof(struct logger_entry) + header.len);
+	fix_up_readers(log, sizeof(struct logger_entry) + count);
 
 	while (vec_count-- > 0) {
 		size_t len;
 
 		/* figure out how much of this vector we can keep */
-		len = min_t(size_t, iov->iov_len, header.len - ret);
+		len = min_t(size_t, iov->iov_len, header.len - 1);
 
 		/* write out this segment's payload */
 		do_write_log(log, iov->iov_base, len);
@@ -781,5 +793,5 @@ module_exit(klogger_exit);
 MODULE_ALIAS(TAG);
 MODULE_DESCRIPTION("Enhanced adb kernel logger");
 MODULE_AUTHOR("Tanguy Pruvot, CyanogenMod, 2012");
-MODULE_VERSION("2.5");
+MODULE_VERSION("2.6");
 MODULE_LICENSE("GPL");
