@@ -2,9 +2,9 @@ android_device_samsung_i9103
 ============================
 
 This is my initial contribution for the Galaxy R, it's a preliminary setup which
-allow to build the kernel, modules and a basic cm7 rom.
+allow to build the kernel, modules.
 
-PLEASE NOTE I DON'T HAVE THE DEVICE YET (will have it soon) SO DONT FLASH THIS :p
+PLEASE NOTE I ONLY USE THIS TO BUILD THE KERNEL YET, SO DONT FLASH THIS :p
 
 Add these 3 projects in your .repo/manifest.xml ( or .repo/local_manifest.xml ) and repo sync
 
